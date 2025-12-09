@@ -1,0 +1,64 @@
+import random
+
+cardvalues = {
+    "[A]": 11,
+    "[2]": 2,
+    "[3]": 3,
+    "[4]": 4,
+    "[5]": 5,
+    "[6]": 6,
+    "[7]": 7,
+    "[8]": 8,
+    "[9]": 9,
+    "[10]": 10,
+    "[J]": 10,
+    "[Q]": 10,
+    "[K]": 10
+}
+
+cardSuits = ["S", "H", "C", "D"]
+currentfunds = 1000
+currentbet = 0
+
+def cardShuffler():
+    global cardLibrary
+    global userCards
+    global dealerCards
+    cardLibrary = []
+    userCards = []
+    dealerCards = []
+    for card in cardvalues:
+        for cardSuit in cardSuits:
+            cardLibrary.insert(-1, card)
+
+def valuetest(cards):
+    totalvalue = 0
+    for card in cards:
+        totalvalue += cardvalues[card]
+    for card in cards:
+        if card == "[A]" and totalvalue > 21:
+            totalvalue -= 10
+    return totalvalue
+
+def deal(player, hide=False):
+            dealtCard = random.choice(cardLibrary)
+            if hide == False:
+                print("Dealing " + dealtCard)
+            else:
+                 print("Dealing [?]")
+            player += [dealtCard]
+            cardLibrary.remove(dealtCard)
+
+def dealphase(player):
+    deal(player)
+    deal(dealerCards)
+    deal(player)
+    deal(dealerCards, True)
+    print("Your cards are:")
+    print(player[0] + player[1])
+    print("Dealer has:")
+    print(dealerCards[0] + "[?]")
+    return player
+
+cardShuffler()
+dealphase(userCards)
