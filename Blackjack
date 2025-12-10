@@ -17,8 +17,6 @@ cardvalues = {
 }
 
 cardSuits = ["S", "H", "C", "D"]
-global funds
-global bet
 funds = 1000
 bet = 0
 
@@ -95,7 +93,6 @@ def playphase(player, bet, funds, answer="n"):
             funds = infoDump[2]
             bet = infoDump[1]
             player = infoDump[0]
-            print(type(answer))
         elif testwin(valuetest(player)) == 2:
             print("You win!")
             funds += bet * 2
@@ -142,6 +139,27 @@ def playphasedealer(player, bet, funds, answer):
                 answer = "d"
                 return player, bet, funds, answer
             
-cardShuffler()
-dealphase(userCards)
-playphase(userCards, bet, funds, "y")
+def betphase(total):
+    print("Total funds: " + str(funds))
+    print("Bet? (enter amount...)")
+    global newBet
+    global newFunds
+    try:
+        amount = int(input())
+        newBet = amount
+        print("Betting: " + str(newBet))
+        newFunds = total
+        newFunds -= newBet
+        print("Total funds: " + str(newFunds))
+    except ValueError:
+        print("Enter a valid number")
+        betphase(total)
+    
+while funds > 0:
+    cardShuffler()
+    betphase(funds)
+    funds = newFunds
+    bet = newBet
+    dealphase(userCards)
+    funds = playphase(userCards, bet, funds, "y")
+print("Out of funds!")
