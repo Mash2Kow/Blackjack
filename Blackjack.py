@@ -1,6 +1,6 @@
 import random
 
-cardvalues = {
+cardValues = {
     "[A]": 11,
     "[2]": 2,
     "[3]": 3,
@@ -27,14 +27,14 @@ def cardShuffler():
     cardLibrary = []
     userCards = []
     dealerCards = []
-    for card in cardvalues:
+    for card in cardValues:
         for cardSuit in cardSuits:
             cardLibrary.insert(-1, card)
 
 def valuetest(cards):
     totalvalue = 0
     for card in cards:
-        totalvalue += cardvalues[card]
+        totalvalue += cardValues[card]
     for card in cards:
         if card == "[A]" and totalvalue > 21:
             totalvalue -= 10
@@ -53,7 +53,7 @@ def deal(player, hide=False):
             if hide == False:
                 print("Dealing " + dealtCard)
             else:
-                 print("Dealing [?]")
+                print("Dealing [?]")
             player += [dealtCard]
             cardLibrary.remove(dealtCard)
 
@@ -125,10 +125,10 @@ def playphasedealer(player, bet, funds, answer):
             answer = "d"
             return player, bet, funds, answer
         elif valuetest(player) == 21:
-            print("Bust!")
+            print("You lose!")
             answer = "d"
             return player, bet, funds, answer
-        elif valuetest(player) <= 16:
+        elif valuetest(player) <= 16 and valuetest(userCards) > valuetest(dealerCards):
             deal(player)
             return player, bet, funds, answer
         else:
@@ -153,7 +153,11 @@ def betphase(total):
     global newBet
     global newFunds
     try:
-        amount = int(input())
+        amount = 0
+        while amount < 1 or total < amount:  
+            amount = int(input())
+            if amount < 1 or total < amount:
+                print("Invalid amount.")
         newBet = amount
         print("Betting: " + str(newBet))
         newFunds = total
@@ -200,9 +204,9 @@ while funds > 0:
     funds = newFunds
     bet = newBet
     dealphase(userCards)
-    if dealerCards[0] == "[A]" and valuetest(userCards) != 21:
+    if dealerCards[0] == "[A]" and valuetest(userCards) != 21 and funds >= bet * 0.5:
         insurancephase(funds, bet)
-    if valuetest(userCards) >= 9 and valuetest(userCards) <= 11:
+    if valuetest(userCards) >= 9 and valuetest(userCards) <= 11 and funds >= bet * 2:
         doublephase(funds, bet)
     funds = newFunds
     bet = newBet
