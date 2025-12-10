@@ -17,8 +17,10 @@ cardvalues = {
 }
 
 cardSuits = ["S", "H", "C", "D"]
-currentfunds = 1000
-currentbet = 0
+global funds
+global bet
+funds = 1000
+bet = 0
 
 def cardShuffler():
     global cardLibrary
@@ -40,6 +42,14 @@ def valuetest(cards):
             totalvalue -= 10
     return totalvalue
 
+def testwin(value):
+    if value > 21:
+        return 3
+    elif value == 21:
+        return 2
+    else:
+        return 1
+
 def deal(player, hide=False):
             dealtCard = random.choice(cardLibrary)
             if hide == False:
@@ -60,5 +70,78 @@ def dealphase(player):
     print(dealerCards[0] + "[?]")
     return player
 
+def hitfunction(player, bet, funds, answer):
+        while answer != "y" or answer != "n":
+            print("Hit? (Y/N)")
+            answer = input()
+            if answer == "y":
+                deal(player)
+                return player, bet, funds, answer
+            elif answer == "n":
+                print("Dealers turn.")
+                player = dealerCards
+                print(dealerCards[0] + dealerCards[1])
+                return player, bet, funds, answer
+            else:
+                print("Try again")
+
+def playphase(player, bet, funds, answer="n"):
+    while answer == "y":
+        print("Total Value:")
+        print(valuetest(player))
+        if testwin(valuetest(player)) == 1:
+            infoDump = hitfunction(player, bet, funds, answer)
+            answer = infoDump[3]
+            funds = infoDump[2]
+            bet = infoDump[1]
+            player = infoDump[0]
+            print(type(answer))
+        elif testwin(valuetest(player)) == 2:
+            print("You win!")
+            funds += bet * 2
+            return funds
+        elif testwin(valuetest(player)) == 3:
+            print("Bust!")
+            return funds
+    while answer == "n":
+        infoDump = playphasedealer(player, bet, funds, answer)
+        answer = infoDump[3]
+        funds = infoDump[2]
+        bet = infoDump[1]
+        player = infoDump[0]
+    return funds
+
+def playphasedealer(player, bet, funds, answer):
+        print("Total Value:")
+        print(valuetest(player))
+        if valuetest(player) > 21:
+            print("You win!")
+            funds += bet * 2
+            answer = "d"
+            return player, bet, funds, answer
+        elif valuetest(player) == 21:
+            print("Bust!")
+            answer = "d"
+            return player, bet, funds, answer
+        elif valuetest(player) <= 16:
+            deal(player)
+            return player, bet, funds, answer
+        else:
+            if valuetest(userCards) > valuetest(dealerCards):
+                print("You win!")
+                funds += bet * 2
+                answer = "d"
+                return player, bet, funds, answer
+            elif valuetest(dealerCards) == valuetest(userCards):
+                print("Draw!")
+                answer = "d"
+                funds += bet
+                return player, bet, funds, answer
+            elif valuetest(userCards) < valuetest(dealerCards):
+                print("You lose!")
+                answer = "d"
+                return player, bet, funds, answer
+            
 cardShuffler()
 dealphase(userCards)
+playphase(userCards, bet, funds, "y")
