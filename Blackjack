@@ -194,17 +194,17 @@ def insurancephase(funds, bet, answer="null"):
             print("Try again")
     
 while funds > 0:
+    sideBet = 0
     cardShuffler()
     betphase(funds)
     funds = newFunds
     bet = newBet
     dealphase(userCards)
-    if dealerCards[0] == "[A]":
+    if dealerCards[0] == "[A]" and valuetest(userCards) != 21:
         insurancephase(funds, bet)
     if valuetest(userCards) >= 9 and valuetest(userCards) <= 11:
         doublephase(funds, bet)
     funds = newFunds
     bet = newBet
     funds = playphase(userCards, bet, funds, "y")
-    sideBet = 0
 print("Out of funds!")
