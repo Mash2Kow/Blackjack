@@ -84,6 +84,9 @@ def hitfunction(player, bet, funds, answer):
                 print("Try again")
 
 def playphase(player, bet, funds, answer="n"):
+    if (valuetest(player)) == 21:
+        print("Natural 21")
+        bet = bet*1.25
     while answer == "y":
         print("Total Value:")
         print(valuetest(player))
@@ -111,6 +114,11 @@ def playphase(player, bet, funds, answer="n"):
 def playphasedealer(player, bet, funds, answer):
         print("Total Value:")
         print(valuetest(player))
+        if (valuetest(player)) == 21 and len(dealerCards) == 2:
+            print("Natural 21")
+            if sideBet != 0:
+                print("Awarding Insurance " + str(sideBet))
+                funds += sideBet * 2
         if valuetest(player) > 21:
             print("You win!")
             funds += bet * 2
@@ -154,6 +162,36 @@ def betphase(total):
     except ValueError:
         print("Enter a valid number")
         betphase(total)
+
+def doublephase(funds, bet, answer="null"):
+    global newBet
+    global newFunds
+    while answer != "y" and answer != "n":
+        print("You have: " + str(valuetest(userCards)) + " - Double the bet? (y/n)")
+        answer = input()
+        if answer == "y":
+            newFunds = funds - bet
+            newBet = bet * 2
+            print("Total funds: " + str(newFunds))
+        elif answer == "n":
+            return funds, bet
+        else:
+            print("Try again")
+
+def insurancephase(funds, bet, answer="null"):
+    global newFunds
+    global sideBet
+    while answer != "y" and answer != "n":
+        print("Dealer has [A] - Insure your bet? (y/n)")
+        answer = input()
+        if answer == "y":
+            sideBet = bet * 0.5
+            newFunds = funds - sideBet
+            print("Total funds: " + str(newFunds))
+        elif answer == "n":
+            return funds, bet
+        else:
+            print("Try again")
     
 while funds > 0:
     cardShuffler()
@@ -161,5 +199,12 @@ while funds > 0:
     funds = newFunds
     bet = newBet
     dealphase(userCards)
+    if dealerCards[0] == "[A]":
+        insurancephase(funds, bet)
+    if valuetest(userCards) >= 9 and valuetest(userCards) <= 11:
+        doublephase(funds, bet)
+    funds = newFunds
+    bet = newBet
     funds = playphase(userCards, bet, funds, "y")
+    sideBet = 0
 print("Out of funds!")
