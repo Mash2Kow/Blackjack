@@ -1,5 +1,6 @@
 import random
 
+# Denna dictionary håller alla kort värden
 cardValues = {
     "[A]": 11,
     "[2]": 2,
@@ -20,7 +21,8 @@ cardSuits = ["S", "H", "C", "D"]
 funds = 1000
 bet = 0
 
-def cardShuffler():
+# Genererar en ny kortlek
+def cardshuffler():
     global cardLibrary
     global userCards
     global dealerCards
@@ -31,6 +33,7 @@ def cardShuffler():
         for cardSuit in cardSuits:
             cardLibrary.insert(-1, card)
 
+# Returnerar en hands värde
 def valuetest(cards):
     totalvalue = 0
     for card in cards:
@@ -40,6 +43,7 @@ def valuetest(cards):
             totalvalue -= 10
     return totalvalue
 
+# Returnerar ett utfalls beslut i form av 1-3
 def testwin(value):
     if value > 21:
         return 3
@@ -48,6 +52,7 @@ def testwin(value):
     else:
         return 1
 
+# Delar ut ett kort
 def deal(player, hide=False):
             dealtCard = random.choice(cardLibrary)
             if hide == False:
@@ -57,6 +62,7 @@ def deal(player, hide=False):
             player += [dealtCard]
             cardLibrary.remove(dealtCard)
 
+# Påbörjar utdelnings fasen
 def dealphase(player):
     deal(player)
     deal(dealerCards)
@@ -68,6 +74,7 @@ def dealphase(player):
     print(dealerCards[0] + "[?]")
     return player
 
+# Frågar spelaren om de vill ha ett nytt kort
 def hitfunction(player, bet, funds, answer):
         while answer != "y" or answer != "n":
             print("Hit? (Y/N)")
@@ -83,6 +90,7 @@ def hitfunction(player, bet, funds, answer):
             else:
                 print("Try again")
 
+# Utspelar spel fasen
 def playphase(player, bet, funds, answer="n"):
     if (valuetest(player)) == 21:
         print("Natural 21")
@@ -111,6 +119,7 @@ def playphase(player, bet, funds, answer="n"):
         player = infoDump[0]
     return funds
 
+# Spelar ut dealerns spel fas
 def playphasedealer(player, bet, funds, answer):
         print("Total Value:")
         print(valuetest(player))
@@ -146,7 +155,8 @@ def playphasedealer(player, bet, funds, answer):
                 print("You lose!")
                 answer = "d"
                 return player, bet, funds, answer
-            
+
+# Matar in en insats för nästa spelomgång    
 def betphase(total):
     print("Total funds: " + str(funds))
     print("Bet? (enter amount...)")
@@ -167,6 +177,7 @@ def betphase(total):
         print("Enter a valid number")
         betphase(total)
 
+# Frågar spelaren om de vill dubbla
 def doublephase(funds, bet, answer="null"):
     global newBet
     global newFunds
@@ -182,6 +193,7 @@ def doublephase(funds, bet, answer="null"):
         else:
             print("Try again")
 
+# Frågar spelaren om de vill försäkra
 def insurancephase(funds, bet, answer="null"):
     global newFunds
     global sideBet
@@ -196,10 +208,11 @@ def insurancephase(funds, bet, answer="null"):
             return funds, bet
         else:
             print("Try again")
-    
+
+# Loopar alla faser
 while funds > 0:
     sideBet = 0
-    cardShuffler()
+    cardshuffler()
     betphase(funds)
     funds = newFunds
     bet = newBet
